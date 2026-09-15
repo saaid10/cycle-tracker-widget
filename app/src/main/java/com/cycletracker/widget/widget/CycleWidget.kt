@@ -71,6 +71,14 @@ class CycleWidget : GlanceAppWidget() {
                 )
             } else {
                 StatusHeader(prefs)
+                val lastError = prefs[WidgetKeys.lastError]?.takeIf { it.isNotBlank() }
+                if (lastError != null) {
+                    Spacer(modifier = GlanceModifier.height(4.dp))
+                    Text(
+                        text = "Couldn't save: $lastError",
+                        style = TextStyle(fontSize = 11.sp, color = ColorProvider(Color(0xFFB00020)))
+                    )
+                }
                 Spacer(modifier = GlanceModifier.height(8.dp))
                 FlowButtonsRow()
                 Spacer(modifier = GlanceModifier.height(4.dp))

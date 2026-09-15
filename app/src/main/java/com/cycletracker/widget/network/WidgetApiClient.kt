@@ -1,6 +1,7 @@
 package com.cycletracker.widget.network
 
 import android.content.Context
+import android.util.Log
 import com.cycletracker.widget.BuildConfig
 import com.cycletracker.widget.auth.AuthRepository
 import com.cycletracker.widget.auth.AuthResult
@@ -12,12 +13,19 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.IOException
+import java.util.concurrent.TimeUnit
+
+private const val TAG = "CycleTrackerWidget"
 
 // Calls the existing cycle-tracker Next.js app's /api/widget/* routes.
 class WidgetApiClient(context: Context) {
 
     private val authRepository = AuthRepository(context)
-    private val httpClient = OkHttpClient()
+    private val httpClient = OkHttpClient.Builder()
+        .connectTimeout(15, TimeUnit.SECONDS)
+        .readTimeout(15, TimeUnit.SECONDS)
+        .writeTimeout(15, TimeUnit.SECONDS)
+        .build()
     private val json = Json { ignoreUnknownKeys = true }
     private val jsonMediaType = "application/json".toMediaType()
 
@@ -69,6 +77,7 @@ class WidgetApiClient(context: Context) {
                 }
             }
         } catch (e: IOException) {
+            Log.e(TAG, "Network request failed: ${e::class.simpleName}: ${e.message}")
             throw ApiException.NetworkFailure
         }
     }

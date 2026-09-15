@@ -1,6 +1,7 @@
 package com.cycletracker.widget.widget.actions
 
 import android.content.Context
+import android.util.Log
 import androidx.glance.GlanceId
 import androidx.glance.action.ActionParameters
 import androidx.glance.appwidget.action.ActionCallback
@@ -14,6 +15,8 @@ import com.cycletracker.widget.widget.WidgetKeys
 import com.cycletracker.widget.widget.applyStatus
 import com.cycletracker.widget.widget.markError
 import com.cycletracker.widget.widget.markNeedsLogin
+
+private const val TAG = "CycleTrackerWidget"
 
 val flowIntensityParam = ActionParameters.Key<String>("flowIntensity")
 
@@ -42,6 +45,7 @@ class LogFlowAction : ActionCallback {
         } catch (e: ApiException.Unauthorized) {
             updateAppWidgetState(context, glanceId) { prefs -> prefs.markNeedsLogin() }
         } catch (e: ApiException) {
+            Log.e(TAG, "LogFlowAction failed: ${e::class.simpleName}: ${e.message}")
             updateAppWidgetState(context, glanceId) { prefs -> prefs.markError(e.message ?: "Failed to log") }
         }
 
